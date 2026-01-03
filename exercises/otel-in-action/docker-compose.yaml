@@ -30,6 +30,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
       - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
       - OTEL_EXPORTER_OTLP_METRICS_PROTOCOL=grpc
+      # component's OpenTelemetry scope identifier
       - OTEL_RESOURCE_ATTRIBUTES=service.name=todobackend-springboot
       - OTEL_METRICS_EXPORTER=otlp,logging-otlp
       - OTEL_LOGS_EXPORTER=none
@@ -51,6 +52,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
       - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
       - OTEL_EXPORTER_OTLP_METRICS_PROTOCOL=grpc
+      # component's OpenTelemetry scope identifier
       - OTEL_RESOURCE_ATTRIBUTES=service.name=todoui-thymeleaf
       - OTEL_METRICS_EXPORTER=otlp,logging-otlp
       - OTEL_LOGS_EXPORTER=none
@@ -66,6 +68,7 @@ services:
     environment:
       - BACKEND_URL=http://todobackend-springboot:8080/todos/
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_EXPORTER_OTLP_ENDPOINT}
+      # component's OpenTelemetry scope identifier
       - OTEL_RESOURCE_ATTRIBUTES=service.name=todoui-flask
       - OTEL_METRICS_EXPORTER=otlp
 
