@@ -5,7 +5,7 @@ CONFIG_FILE=.config
 OTEL_JAVA_AGENT_FILENAME=opentelemetry-javaagent.jar
 OTEL_JAVA_AGENT_URL=https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.8.0/opentelemetry-javaagent.jar
 
-echo "Checkihng java version..."
+echo "Checking java version..."
 if [ $(java -version 2>&1 | grep -c ${JAVA_VERSION}) -eq 0 ]; then
     echo "Java ${JAVA_VERSION} is required."
     exit 1
@@ -22,7 +22,6 @@ fi
 
 # verify environment variables are set
 echo "OpenTelemetry configuration:"
-echo "  OTEL_SERVICE_NAME=${OTEL_SERVICE_NAME}"
 echo "  OTEL_TRACES_EXPORTER=${OTEL_TRACES_EXPORTER}"
 echo "  OTEL_METRICS_EXPORTER=${OTEL_METRICS_EXPORTER}"
 echo "  OTEL_LOGS_EXPORTER=${OTEL_LOGS_EXPORTER}"
