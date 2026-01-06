@@ -6,22 +6,21 @@ OTEL_JAVA_AGENT_FILENAME=opentelemetry-javaagent.jar
 OTEL_JAVA_AGENT_URL=https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v2.8.0/opentelemetry-javaagent.jar
 
 function check_java_version() {
-    echo "Checking java version..."
+    echo "===> Checking java version..."
     if [ $(java -version 2>&1 | grep -c ${JAVA_VERSION}) -eq 0 ]; then
-        echo "Java ${JAVA_VERSION} is required."
+        echo "===> Java ${JAVA_VERSION} is required."
         exit 1
     fi
 }
 
-
 function load_configuration() {
-    echo "Loading the configuration..."
+    echo "===> Loading the configuration..."
     source ${CONFIG_FILE}
     if [ ! -f ${CONFIG_FILE} ]; then
-        echo "Configuration file not found."
+        echo "===> Configuration file not found."
         exit 1
     fi
-    echo "OpenTelemetry configuration:"
+    echo "===> OpenTelemetry configuration:"
     echo "  OTEL_TRACES_EXPORTER=${OTEL_TRACES_EXPORTER}"
     echo "  OTEL_METRICS_EXPORTER=${OTEL_METRICS_EXPORTER}"
     echo "  OTEL_LOGS_EXPORTER=${OTEL_LOGS_EXPORTER}"
@@ -29,28 +28,33 @@ function load_configuration() {
 
 function build_application() {
     if [ ! -f target/todobackend-0.0.1-SNAPSHOT.jar ]; then
-        echo "Building the application..."
-        mvn clean package
+        echo "===> Building the application..."
+    else 
+        echo "===> Rebuilding the application..."
     fi
+    mvn clean package
+    echo -e "\n===> Application built successfully."
 }
 
 function download_opentelemetry_java_agent() {
     if [ ! -f ${OTEL_JAVA_AGENT_FILENAME} ]; then
-        echo "Downloading the OpenTelemetry Java agent..."
+        echo "===> Downloading the OpenTelemetry Java agent..."
         wget ${OTEL_JAVA_AGENT_URL} \
             -O ${OTEL_JAVA_AGENT_FILENAME}
     fi
+    echo -e "\n===> OpenTelemetry Java agent downloaded successfully."
 }
 
 function check_opentelemetry_java_agent() {
     if [ ! -f ${OTEL_JAVA_AGENT_FILENAME} ]; then
-        echo "File ${OTEL_JAVA_AGENT_FILENAME} not found."
+        echo "===> File ${OTEL_JAVA_AGENT_FILENAME} not found."
         exit 1
     fi
+    echo -e "\n===> OpenTelemetry Java agent checked successfully."
 }
 
 function run_jaeger_docker_container() {
-    echo "Running the Jaeger docker container..."
+    echo "===> Running the Jaeger docker container..."
     docker run -d --name jaeger \
         -e COLLECTOR_OTLP_ENABLED=true \
         -p 16686:16686 \
@@ -59,21 +63,23 @@ function run_jaeger_docker_container() {
         -p 4318:4318 \
         jaegertracing/all-in-one
     if [ -z $(docker ps -q -f name=jaeger) ]; then
-        echo "Failed to run the Jaeger docker container."
+        echo "===> Failed to run the Jaeger docker container."
         exit 1
     fi
 }
 
 function run_application() {
+    echo "===> Running the application..."
     java --add-opens java.base/java.lang=ALL-UNNAMED \
         -javaagent:${OTEL_JAVA_AGENT_FILENAME} \
         -jar target/todobackend-0.0.1-SNAPSHOT.jar
 }
 
 function clean_up() {
-    echo "Cleaning up..."
+    echo "===> Cleaning up..."
     docker stop jaeger
     docker rm -f jaeger
+    echo -e "\n===> Cleaned up successfully."
 }
 
 function main() {
