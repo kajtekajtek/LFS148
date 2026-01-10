@@ -1,9 +1,36 @@
 extensions:
 
 receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
 
 processors:
+  batch:
+  attributes/otelcol_msg:
+    actions:
+      - key: otelcol_message
+        action: insert
+        value: "== This message was added by the OpenTelemetry Collector =="
 
 exporters:
+  debug:
+    verbosity: detailed
 
 service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]
+    logs:
+      receivers: [otlp]
+      processors: [batch, attributes/otelcol_msg]
+      exporters: [debug]
